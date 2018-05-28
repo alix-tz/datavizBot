@@ -32,7 +32,7 @@ def createTile(listname):
     :param listname: list
     :return: string
     """
-    pivot = random.choice([' confrontés aux ', ' en fonction des ', ' compoarés aux ', ' au prisme des ', ' croisés avec les', 'à la lumière des ', ' mis en rapport avec les '])
+    pivot = random.choice([' confrontés aux ', ' en fonction des ', ' comparés aux ', ' au prisme des ', ' croisés avec les', ' à la lumière des ', ' mis en rapport avec les '])
     if len(listname) > 2:
         title = 'Les ' + str(listname[0]) + str(pivot) + str(listname[1]) + ' (et autres données)'
     else:
@@ -197,13 +197,13 @@ def retrieveDataTrack(track, scn, mode, orientation):
     if scn == 'barscn':
         trackData = createDataBar(xData, yData, trackName, orientation)
     elif scn == 'scatscn':
-        if mode == 'filled':
+        if mode == 'f':
             trackData = createDataFill(xData, yData, trackName)
-        elif mode == 'bubble':
+        elif mode == 'b':
             trackData = createDataBubble(xData, yData, zData, trackName)
-        elif mode == 'line':
+        elif mode == 'l':
             trackData = createDataLine(xData, yData, trackName)
-        elif mode == 'dot':
+        elif mode == 'd':
             trackData = createDataDot(xData, yData, trackName)
     return trackData, trackName
 
@@ -249,7 +249,7 @@ def stackLayout(title):
     return layout
 
 
-def barChart(tracks):
+def barChart(tracks, rMode):
     """
     Triggers bar type chart scenario with appropriate steps to produce a figure
     :param tracks: integer
@@ -272,14 +272,10 @@ def barChart(tracks):
     title = createTile(listname)
     print("DEBUG : barChart() : title = " + title)
 
-    # Choosing bar chart style
-    mode = random.choice(['group', 'stack'])
-    print("DEBUG : barChart() : mode = " + mode)
-
     # Creating Layout object
-    if mode == 'group':
+    if rMode == 'g':
         layout = groupLayout(title)
-    if mode == 'stack':
+    if rMode == 's':
         layout = stackLayout(title)
 
     # Generating the figure to return
@@ -293,15 +289,13 @@ def barChart(tracks):
 #                   SCATTER SCENARIOS                   #
 # ------------------------------------------------------#
 
-def scatChart(tracks):
+def scatChart(tracks, rMode):
     """
     Triggers scatter type chart scenario with appropriate steps to produce a figure
     :param tracks: integer
     :return: figure object
     """
     # Chosing scatter chart style
-    rMode = random.choice(['filled', 'line', 'dot', 'bubble'])
-    print("DEBUG : scatChart() : rMode = " + rMode)
     listname = []
     data = []
     # Creating each Bar object, appended to data list object
@@ -369,21 +363,35 @@ def heatmap(track, axis):
 rKey = random.randint(1, 6)
 print("DEBUG : rKEy = " + str(rKey))
 
+trackid =''
+
 if rKey == 1 or rKey == 2 :
     rTracks = random.randint(2,5)
     tracks = random.sample(range(1, 9), rTracks)
     print("DEBUG : rTracks = " + str(rTracks))
     print("DEBUG : tracks = ", tracks)
-    print("DEBUG : barChart() with tracks in args")
-    fig = barChart(tracks)
+    rMode = random.choice(['g', 's'])
+    print("DEBUG : rMode = " + rMode)
+    print("DEBUG : barChart() with tracks and rMode in args")
+    fig = barChart(tracks, rMode)
+    for x in tracks:
+        trackid = trackid + str(x)
+    code = "b" + rMode + str(rTracks) + trackid
+    print("DEBUG : code = " + code)
 
 elif rKey == 3 or rKey == 4 or rKey == 5:
     rTracks = random.randint(2, 5)
     tracks = random.sample(range(1, 9), rTracks)
     print("DEBUG : rTracks = " + str(rTracks))
     print("DEBUG : tracks = ", tracks)
-    print("DEBUG : going to scatChart() with tracks in args")
-    fig = scatChart(tracks)
+    rMode = random.choice(['f', 'l', 'd', 'b'])
+    print("DEBUG : rMode = " + rMode)
+    print("DEBUG : going to scatChart() with tracks and rMode in args")
+    fig = scatChart(tracks, rMode)
+    for x in tracks:
+        trackid = trackid + str(x)
+    code = "s" + rMode + str(rTracks) + trackid
+    print("DBUG : code = " + code)
 
 elif rKey == 6:
     rTrack = random.randint(2,9)
@@ -392,8 +400,10 @@ elif rKey == 6:
     print("DEBUG : axis =" + str(axis))
     print("DEBUG : going to Heatmap() with rTracks and axis in args")
     fig = heatmap(rTrack, axis)
+    code = "h" + axis + str(rTrack)
+    print("DEBUG : code =" + code)
 
 else:
     print("unexpected error, random key must be out of range")
 
-py.image.save_as(fig, filename='testing', format='png')
+py.image.save_as(fig, filename=code, format='png')
