@@ -7,7 +7,7 @@ import random
 import plotly.plotly as py
 import plotly.graph_objs as go
 from sample import sample
-import csv
+from code import previouscodes
 
 ########################################################
 #                      FUNCTIONS                       #
@@ -253,6 +253,7 @@ def barChart(tracks, rMode):
     """
     Triggers bar type chart scenario with appropriate steps to produce a figure
     :param tracks: integer
+    :param rMode: string
     :return: figure object
     """
     data = []
@@ -293,6 +294,7 @@ def scatChart(tracks, rMode):
     """
     Triggers scatter type chart scenario with appropriate steps to produce a figure
     :param tracks: integer
+    :param rMode: string
     :return: figure object
     """
     # Chosing scatter chart style
@@ -332,6 +334,12 @@ def scatChart(tracks, rMode):
 #                  HEATMAP SCENARIOS                    #
 # ------------------------------------------------------#
 def heatmap(track, axis):
+    """
+    Creates a heatmap style graph and returns it
+    :param track: integer
+    :param axis: string
+    :return: figure object
+    """
     color1 = pickColor()
     color2 = pickColor()
     colorscale = [[0, color1], [1, color2]]
@@ -359,51 +367,85 @@ def heatmap(track, axis):
 #             TRIGER FIG AND CODE CREATION
 #------------------------------------------------------#
 def createFig(rKey):
-
+    """
+    Trigers the creation of a graph and a unique code for this graph from a random integer
+    :param rKey: integer
+    :return: tuple containing first figure object, second string
+    """
     trackid =''
-
     if rKey == 1 or rKey == 2 :
+        # Chosing how many tracks will de displayed
         rTracks = random.randint(2,5)
+        # Chosing which tracks will be displayed
         tracks = random.sample(range(1, 9), rTracks)
         print("DEBUG : rTracks = " + str(rTracks))
         print("DEBUG : tracks = ", tracks)
+        # Chosing a submode (group or stack) for the bar graph
         rMode = random.choice(['g', 's'])
         print("DEBUG : rMode = " + rMode)
         print("DEBUG : barChart() with tracks and rMode in args")
+        # Generating the figure
         fig = barChart(tracks, rMode)
-        for x in tracks:
+        # Generating the unique code for the figure
+        sTracks = sorted(tracks)
+        print("DEBUG : sTracks = ", sTracks)
+        for x in sTracks:
             trackid = trackid + str(x)
         code = "b" + rMode + str(rTracks) + trackid
         print("DEBUG : code = " + code)
 
     elif rKey == 3 or rKey == 4 or rKey == 5:
+        # Chosing how many tracks will be displayed
         rTracks = random.randint(2, 5)
+        # Chosing which tracks will be displayed
         tracks = random.sample(range(1, 9), rTracks)
         print("DEBUG : rTracks = " + str(rTracks))
         print("DEBUG : tracks = ", tracks)
+        # Chosing a submode (line-filed, line, dot, bubble) for the scatter graph
         rMode = random.choice(['f', 'l', 'd', 'b'])
         print("DEBUG : rMode = " + rMode)
         print("DEBUG : going to scatChart() with tracks and rMode in args")
+        # Generating the figure
         fig = scatChart(tracks, rMode)
-        for x in tracks:
+        # Generating the unique code for the figure
+        sTracks = sorted(tracks)
+        print("DEBUG : sTracks = ", sTracks)
+        for x in sTracks:
             trackid = trackid + str(x)
         code = "s" + rMode + str(rTracks) + trackid
         print("DBUG : code = " + code)
-
     elif rKey == 6:
+        # Chosing which track will be displayed
         rTrack = random.randint(2,9)
         print("DEBUG : rTrack =" + str(rTrack))
+        # Chosing which axis will be displayed
         axis = random.choice(['y','z'])
         print("DEBUG : axis =" + str(axis))
         print("DEBUG : going to Heatmap() with rTracks and axis in args")
+        # Generating the figure
         fig = heatmap(rTrack, axis)
+        # Generating the unique code for the figure
         code = "h" + axis + str(rTrack)
         print("DEBUG : code = " + code)
-
     else:
         print("unexpected error, random key must be out of range")
-
     return fig, code
+
+
+def writenewcodelist(code):
+    """
+    Creates a string containing a list to write into a unique code tracking file
+    :param code: string
+    :return:
+    """
+    previous = ""
+    for x in previouscodes:
+        previous = previous + "'" + x + "',"
+    newcodes = "previouscodes=[" + previous + "'" + code + "']"
+    with open('code.py', 'w') as file:
+        file.write(newcodes)
+    return
+
 
 ########################################################
 #                        SCRIPT                        #
@@ -413,4 +455,6 @@ print("DEBUG : rKEy = " + str(rKey))
 
 fig, code = createFig(rKey)
 
-py.image.save_as(fig, filename=code, format='png')
+writenewcodelist(code)
+filename = "images/" + code
+py.image.save_as(fig, filename=filename, format='png')
