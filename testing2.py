@@ -301,12 +301,11 @@ def scatChart(tracks, rMode):
     # Creating each Bar object, appended to data list object
     for track in tracks:
         print("DEBUG : scatChart() loop : going to retrieveDataTrack with track, scatscn, rMode and None in args")
-        DATA = retrieveDataTrack(track, 'scatscn', rMode, None)
-        print("DEBUG : scatChart() : DATA[0] = ", DATA[0])
-        print("DEBUG : scatChart() : DATA[1] = ", DATA[1])
-        data.append(DATA[0])
-        listname.append(DATA[1])
-        print("DEBUG : scatChart() : DATA tuple as result =", DATA)
+        trace, tracename = retrieveDataTrack(track, 'scatscn', rMode, None)
+        print("DEBUG : scatChart() : DATA[0] = ", trace)
+        print("DEBUG : scatChart() : DATA[1] = ", tracename)
+        data.append(trace)
+        listname.append(tracename)
     # Calculating chart title
     title = createTile(listname)
     print("DEBUG : scatChart() : title = " + title)
@@ -339,10 +338,10 @@ def heatmap(track, axis):
     print("DEBUG : colorscale = ", colorscale)
     tData = sample[str(track)][axis]
     print("DEBUG : tData = ", tData)
-    zData = [tData[:5], tData[5:10], tData[10:]]
+    zData = [tData[:5], tData[5:10], tData[10:]] #----------------- ADAPT TO DATASET LENGTH
     print("DEBUG : zData = ", zData)
     title = sample[str(track)]['name']
-    print("DEBUG : title = " + title)
+    print("DEBUG : title = " + title) #--------------------------- MODIFY TITLE CALCULATION
 
     trace = go.Heatmap(
         z=zData,
@@ -356,6 +355,55 @@ def heatmap(track, axis):
     fig = go.Figure(data=data, layout=layout)
     return fig
 
+#------------------------------------------------------#
+#             TRIGER FIG AND CODE CREATION
+#------------------------------------------------------#
+def createFig(rKey):
+
+    trackid =''
+
+    if rKey == 1 or rKey == 2 :
+        rTracks = random.randint(2,5)
+        tracks = random.sample(range(1, 9), rTracks)
+        print("DEBUG : rTracks = " + str(rTracks))
+        print("DEBUG : tracks = ", tracks)
+        rMode = random.choice(['g', 's'])
+        print("DEBUG : rMode = " + rMode)
+        print("DEBUG : barChart() with tracks and rMode in args")
+        fig = barChart(tracks, rMode)
+        for x in tracks:
+            trackid = trackid + str(x)
+        code = "b" + rMode + str(rTracks) + trackid
+        print("DEBUG : code = " + code)
+
+    elif rKey == 3 or rKey == 4 or rKey == 5:
+        rTracks = random.randint(2, 5)
+        tracks = random.sample(range(1, 9), rTracks)
+        print("DEBUG : rTracks = " + str(rTracks))
+        print("DEBUG : tracks = ", tracks)
+        rMode = random.choice(['f', 'l', 'd', 'b'])
+        print("DEBUG : rMode = " + rMode)
+        print("DEBUG : going to scatChart() with tracks and rMode in args")
+        fig = scatChart(tracks, rMode)
+        for x in tracks:
+            trackid = trackid + str(x)
+        code = "s" + rMode + str(rTracks) + trackid
+        print("DBUG : code = " + code)
+
+    elif rKey == 6:
+        rTrack = random.randint(2,9)
+        print("DEBUG : rTrack =" + str(rTrack))
+        axis = random.choice(['y','z'])
+        print("DEBUG : axis =" + str(axis))
+        print("DEBUG : going to Heatmap() with rTracks and axis in args")
+        fig = heatmap(rTrack, axis)
+        code = "h" + axis + str(rTrack)
+        print("DEBUG : code = " + code)
+
+    else:
+        print("unexpected error, random key must be out of range")
+
+    return fig, code
 
 ########################################################
 #                        SCRIPT                        #
@@ -363,47 +411,6 @@ def heatmap(track, axis):
 rKey = random.randint(1, 6)
 print("DEBUG : rKEy = " + str(rKey))
 
-trackid =''
-
-if rKey == 1 or rKey == 2 :
-    rTracks = random.randint(2,5)
-    tracks = random.sample(range(1, 9), rTracks)
-    print("DEBUG : rTracks = " + str(rTracks))
-    print("DEBUG : tracks = ", tracks)
-    rMode = random.choice(['g', 's'])
-    print("DEBUG : rMode = " + rMode)
-    print("DEBUG : barChart() with tracks and rMode in args")
-    fig = barChart(tracks, rMode)
-    for x in tracks:
-        trackid = trackid + str(x)
-    code = "b" + rMode + str(rTracks) + trackid
-    print("DEBUG : code = " + code)
-
-elif rKey == 3 or rKey == 4 or rKey == 5:
-    rTracks = random.randint(2, 5)
-    tracks = random.sample(range(1, 9), rTracks)
-    print("DEBUG : rTracks = " + str(rTracks))
-    print("DEBUG : tracks = ", tracks)
-    rMode = random.choice(['f', 'l', 'd', 'b'])
-    print("DEBUG : rMode = " + rMode)
-    print("DEBUG : going to scatChart() with tracks and rMode in args")
-    fig = scatChart(tracks, rMode)
-    for x in tracks:
-        trackid = trackid + str(x)
-    code = "s" + rMode + str(rTracks) + trackid
-    print("DBUG : code = " + code)
-
-elif rKey == 6:
-    rTrack = random.randint(2,9)
-    print("DEBUG : rTrack =" + str(rTrack))
-    axis = random.choice(['y','z'])
-    print("DEBUG : axis =" + str(axis))
-    print("DEBUG : going to Heatmap() with rTracks and axis in args")
-    fig = heatmap(rTrack, axis)
-    code = "h" + axis + str(rTrack)
-    print("DEBUG : code =" + code)
-
-else:
-    print("unexpected error, random key must be out of range")
+fig, code = createFig(rKey)
 
 py.image.save_as(fig, filename=code, format='png')
