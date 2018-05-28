@@ -15,7 +15,7 @@ from code import previouscodes
 
 def pickColor():
     """
-    Creates a string object refering to an hex color chosen randomly among a pre-set list
+    Creates a string object refering to a hex color chosen randomly among a pre-set list
     :return: string
     """
     color = random.choice(['#003399', '#0033ff', '#006600', '#006699', '#009933','#00cc66', '#00cc33', '#00ff33', '#00ffcc',
@@ -26,7 +26,7 @@ def pickColor():
     return color
 
 
-def createTile(listname):
+def createTitle(listname):
     """
     Creates a title for the chart
     :param listname: list
@@ -47,7 +47,7 @@ def createDataBar(xData, yData, name, orientation):
     :param yData: list
     :param name: string
     :param orientation: string
-    :return: bar object
+    :return: plotly.graph_objs.graph_objs.Bar
     """
     color1 = pickColor()
     color2 = pickColor()
@@ -74,7 +74,7 @@ def createDataLine(xData, yData, name):
     :param xData: list
     :param yData: list
     :param name: string
-    :return: scatter object
+    :return: plotly.graph_objs.graph_objs.Scatter
     """
     mode = random.choice(['lines', 'lines+markers'])
     shape = random.choice(['hvh', 'spline', 'linear'])
@@ -99,7 +99,7 @@ def createDataFill(xData, yData, name):
     :param xData: list
     :param yData: list
     :param name: string
-    :return: scatter object
+    :return: plotly.graph_objs.graph_objs.Scatter
     """
     mode = random.choice(['lines', 'none'])
     color = pickColor()
@@ -123,7 +123,7 @@ def createDataDot(xData, yData, name):
     :param xData: list
     :param yData: list
     :param name: string
-    :return: scatter object
+    :return: plotly.graph_objs.graph_objs.Scatter
     """
     symbol = random.choice(['circle','x','diamond-wide','star-diamond-dot'])
     color1 = pickColor()
@@ -153,7 +153,7 @@ def createDataBubble(xData, yData, zData, name):
     :param yData: list
     :param zData: list
     :param name: string
-    :return: scatter object
+    :return: plotly.graph_objs.graph_objs.Scatter
     """
     color = pickColor()
     bubbleTrack = go.Scatter(
@@ -175,13 +175,13 @@ def createDataBubble(xData, yData, zData, name):
 
 def retrieveDataTrack(track, scn, mode, orientation):
     """
-    Calculate data from a sample to create traces for chartes
+    Calculate data from a sample to create traces for charts
     Call appropriate function depending on the scenario and chart mode indicated
     :param track: integer
     :param scn: string
     :param mode: string
     :param orientation: string
-    :return: tuple containing first trace item for data list then the name of current dataset
+    :return: tuple containing plotly.graph_objs.graph_objs.Scatter for data list, then the name of current dataset
     """
     databundle = sample[str(track)]
     print("DEBUG : retrieveDataTrack() : databundle = ", databundle)
@@ -215,7 +215,7 @@ def groupLayout(title):
     """
     creates layout object for group style bar layout
     :param title: string
-    :return: layout object
+    :return: plotly.graph_objs.graph_objs.Layout
     """
     layout = go.Layout(
         barmode='group',
@@ -235,7 +235,7 @@ def stackLayout(title):
     """
     creates layout object for stack style bar layout
     :param title: string
-    :return: layout object
+    :return: plotly.graph_objs.graph_objs.Layout
     """
     layout = go.Layout(
         barmode='stack',
@@ -254,7 +254,7 @@ def barChart(tracks, rMode):
     Triggers bar type chart scenario with appropriate steps to produce a figure
     :param tracks: integer
     :param rMode: string
-    :return: figure object
+    :return: plotly.graph_objs.graph_objs.Figure
     """
     data = []
     listname = []
@@ -270,7 +270,7 @@ def barChart(tracks, rMode):
         listname.append(DATA[1])
         print("DEBUG : barChart() : DATA in result = ", DATA)
     # Calculating chart title
-    title = createTile(listname)
+    title = createTitle(listname)
     print("DEBUG : barChart() : title = " + title)
 
     # Creating Layout object
@@ -282,7 +282,6 @@ def barChart(tracks, rMode):
     # Generating the figure to return
     fig = go.Figure(data=data, layout=layout)
     print("DEBUG : barChart() : fig : returning fig")
-    print(type(fig))
     return fig
 
 
@@ -295,7 +294,7 @@ def scatChart(tracks, rMode):
     Triggers scatter type chart scenario with appropriate steps to produce a figure
     :param tracks: integer
     :param rMode: string
-    :return: figure object
+    :return: plotly.graph_objs.graph_objs.Figure
     """
     # Chosing scatter chart style
     listname = []
@@ -304,12 +303,12 @@ def scatChart(tracks, rMode):
     for track in tracks:
         print("DEBUG : scatChart() loop : going to retrieveDataTrack with track, scatscn, rMode and None in args")
         trace, tracename = retrieveDataTrack(track, 'scatscn', rMode, None)
-        print("DEBUG : scatChart() : DATA[0] = ", trace)
-        print("DEBUG : scatChart() : DATA[1] = ", tracename)
+        print("DEBUG : scatChart() : trace = ", trace)
+        print("DEBUG : scatChart() : tracename = ", tracename)
         data.append(trace)
         listname.append(tracename)
     # Calculating chart title
-    title = createTile(listname)
+    title = createTitle(listname)
     print("DEBUG : scatChart() : title = " + title)
     # Creating Layout object
     layout = go.Layout(
@@ -326,7 +325,6 @@ def scatChart(tracks, rMode):
     # Generating the figure to return
     fig = go.Figure(data=data, layout=layout)
     print("DEBUG : scatChart() : fig : returning fig")
-    print(type(fig))
     return fig
 
 
@@ -338,7 +336,7 @@ def heatmap(track, axis):
     Creates a heatmap style graph and returns it
     :param track: integer
     :param axis: string
-    :return: figure object
+    :return: plotly.graph_objs.graph_objs.Figure
     """
     color1 = pickColor()
     color2 = pickColor()
@@ -370,7 +368,7 @@ def createFig(rKey):
     """
     Trigers the creation of a graph and a unique code for this graph from a random integer
     :param rKey: integer
-    :return: tuple containing first figure object, second string
+    :return: tuple containing first plotly.graph_objs.graph_objs.Figure, second string
     """
     trackid =''
     if rKey == 1 or rKey == 2 :
