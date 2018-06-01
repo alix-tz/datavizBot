@@ -1,5 +1,22 @@
 wordlinks = [' analyzed via', ' contrasted with', ' in light of', ' correlated with', ' in relation to', ' matched with', ' linked to', ' ranked against', ' measured against', ' evaluated by', ' seen through the prism of']
 
+lightbgcolors = [
+    '#800000',  # red
+    '#003366',  # blue 1
+    '#584937',  # gray 1
+    '#f79433',  # light orange
+    '#468499',  # light blue
+    '#003366',  # blue 2
+    '#725fdf',  # purple
+    '#f9ca33',  # yellow
+    '#476f01',  # olive green
+    '#008b00',  # green
+    '#8b4500',  # brown
+    '#5e5e5e',  # gray 2
+    '#5f6e44',  # brown-green
+    '#ff0033'  # fushia
+    ]
+
 finalSample = {
     '1': {
         'x':[["Year"],[1900,1901,1902,1903,1904,1905,1906,1907,1908,1909,1910,1911,1912,1913,1914,1915,1916,1917,1918,1919,1920,1921,1922,1923,1924,1925,1926,1927,1928,1929,1930,1931,1932,1933,1934,1935,1936,1937,1938,1939,1940,1941,1942,1943,1944,1945,1946,1947,1948,1949,1950,1951,1952,1953,1954,1955,1956,1957,1958,1959,1960]],
