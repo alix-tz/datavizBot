@@ -8,6 +8,13 @@ import plotly.plotly as py
 import plotly.graph_objs as go
 from sample import othersample as sample
 from code import previouscodes
+from secrets import plot_key, plot_username
+
+########################################################
+#                  AUTHENTIFICATION                    #
+########################################################
+
+py.sign_in(plot_username, plot_key)
 
 ########################################################
 #                      FUNCTIONS                       #
@@ -78,8 +85,6 @@ def createDataLine(xData, yData, name, mode, shape):
     :param shape: string
     :return: plotly.graph_objs.graph_objs.Scatter
     """
-    print("DEBUG : createDataLine : mode = " + mode)
-    print("DEBUG : createDataLine : shape = " + shape)
     color = pickColor()
     # creating the scatter object to return
     lineTrack = go.Scatter(
@@ -104,7 +109,6 @@ def createDataFill(xData, yData, name, mode):
     :param mode: string
     :return: plotly.graph_objs.graph_objs.Scatter
     """
-    print("DEBUG : createDataFill : mode = " + mode)
     color = pickColor()
     # creating the scatter object to return
     fillTrack = go.Scatter(
@@ -129,7 +133,6 @@ def createDataDot(xData, yData, name, symbol):
     :param symbol: string
     :return: plotly.graph_objs.graph_objs.Scatter
     """
-    print("DEBUG : createDataDot : symbol " + symbol)
     color1 = pickColor()
     color2 = pickColor()
     # creating the scatter object to return
@@ -211,16 +214,12 @@ def retrieveDataTrack(track, scn, mode, orientation, dotSymbol, lineShape, lineS
         trackData = createDataBar(xData, rData, rName, orientation)
     elif scn == 'scatscn':
         if mode == 'f':
-            print("DEBUG : using fillStyle, value = " + fillStyle)
             trackData = createDataFill(xData, rData, rName, fillStyle)
         elif mode == 'b':
             trackData = createDataBubble(xData, yData, zData, trackName)
         elif mode == 'l':
-            print("DEBUG : using lineStyle, value = " + lineStyle)
-            print("DEBUG : using lineShape, value = " + lineShape)
             trackData = createDataLine(xData, rData, rName, lineStyle, lineShape)
         elif mode == 'd':
-            print("DEBUG : using dotSymbol, value = " + dotSymbol)
             trackData = createDataDot(xData, rData, rName, dotSymbol)
     return trackData, trackName
 
@@ -309,13 +308,9 @@ def scatChart(tracks, rMode):
     data = []
     # Chosing scatter chart style
     dotSymbol = random.choice(['circle', 'x', 'diamond-wide', 'star-diamond-dot'])
-    print("DEBUG : dotSymbol = " + dotSymbol)
     lineStyle = random.choice(['lines', 'lines+markers'])
-    print("DEBUG : lineShape = " + lineStyle)
     lineShape = random.choice(['hvh', 'spline', 'vhv', 'linear', 'hv'])
-    print("DEBUG : lineStyle = " + lineShape)
     fillStyle = random.choice(['lines', 'none'])
-    print("DEBUG : fillStyle = " + fillStyle)
     # Creating each Bar object, appended to data list object
     for track in tracks:
         trace, tracename = retrieveDataTrack(track, 'scatscn', rMode, None, dotSymbol, lineShape, lineStyle, fillStyle)
@@ -353,7 +348,7 @@ def heatmap(track, axis):
     color1 = pickColor()
     color2 = pickColor()
     colorscale = [[0, color1], [1, color2]]
-    tData = sample[str(track)][0][axis]
+    tData = sample[str(track)][axis][1]
     zData = [tData[:5], tData[5:10], tData[10:]] #----------------- ADAPT TO DATASET LENGTH
     title = sample[str(track)]['name'] #-------------------------- MODIFY TITLE CALCULATION
     trace = go.Heatmap(
@@ -371,7 +366,7 @@ def heatmap(track, axis):
 #------------------------------------------------------#
 #             TRIGER FIG AND CODE CREATION
 #------------------------------------------------------#
-def createFig(rKey):
+def createCode(rKey):
     """
     Trigers the creation of a graph and a unique code for this graph from a random integer
     :param rKey: integer
@@ -385,13 +380,13 @@ def createFig(rKey):
         tracks = random.sample(range(1, 9), rTracks)
         # Chosing a submode (group or stack) for the bar graph
         rMode = random.choice(['g', 's'])
-        # Generating the figure
-        fig = barChart(tracks, rMode)
         # Generating the unique code for the figure
         sTracks = sorted(tracks)
         for x in sTracks:
             trackid = trackid + str(x)
         code = "b" + rMode + str(rTracks) + trackid
+        rTrack = None
+        axis = None
 
     elif rKey == 3 or rKey == 4 or rKey == 5:
         # Chosing how many tracks will be displayed
@@ -400,25 +395,25 @@ def createFig(rKey):
         tracks = random.sample(range(1, 9), rTracks)
         # Chosing a submode (line-filed, line, dot, bubble) for the scatter graph
         rMode = random.choice(['f', 'l', 'd', 'b'])
-        # Generating the figure
-        fig = scatChart(tracks, rMode)
         # Generating the unique code for the figure
         sTracks = sorted(tracks)
         for x in sTracks:
             trackid = trackid + str(x)
         code = "s" + rMode + str(rTracks) + trackid
+        rTrack = None
+        axis = None
     elif rKey == 6:
         # Chosing which track will be displayed
         rTrack = random.randint(2,9)
         # Chosing which axis will be displayed
         axis = random.choice(['y','z'])
-        # Generating the figure
-        fig = heatmap(rTrack, axis)
         # Generating the unique code for the figure
         code = "h" + axis + str(rTrack)
+        tracks = None
+        rMode = None
     else:
         print("ERROR : unexpected error, random key must be out of range")
-    return fig, code
+    return code, tracks, rMode, rTrack, axis
 
 def checkcodelist(code):
     """
@@ -459,8 +454,19 @@ while check == 0:
     check = checkcodelist(code)
     rKey = random.randint(1, 6)
     print("DEBUG : rKEy = " + str(rKey))
-    fig, code = createFig(rKey)
+    code, tracks, rMode, rTrack, axis = createCode(rKey) 
+#    fig, code = createFig(rKey)
+# Generating the figure
+
 print("DEBUG : final code is " + code)
+
+if rKey == 1 or rKey == 2:
+    fig = barChart(tracks, rMode)
+elif rKey == 3 or rKey == 4 or rKey == 5:
+    fig = scatChart(tracks, rMode)
+elif rKey == 6:
+    fig = heatmap(rTrack, axis)
+
 writenewcodelist(code)
 filename = "images/" + code
 py.image.save_as(fig, filename=filename, format='png')
