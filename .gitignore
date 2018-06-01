@@ -2,3 +2,4 @@ __pycache__/
 images/
 .idea/
 code.py
+secrets.py
