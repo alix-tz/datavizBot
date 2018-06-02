@@ -10,13 +10,13 @@ from sample import finalSample as sample
 from sample import darkbgcolor as colorset
 from sample import wordlinks
 from code import previouscodes
-from secrets import plotkey, plotusername
+from secrets import plotkey2, plotusername2
 
 ########################################################
 #                  AUTHENTIFICATION                    #
 ########################################################
 
-py.sign_in(plotusername, plotkey)
+py.sign_in(plotusername2, plotkey2)
 
 ########################################################
 #                    CONSTANTS                         #
@@ -24,6 +24,8 @@ py.sign_in(plotusername, plotkey)
 BG_PAPER = '#161616'
 BG_PLOT = '#161616'
 FONT_COLOR = '#FAFAFA'
+P_WIDTH = 1000
+P_HEIGHT = 800
 
 ########################################################
 #                      FUNCTIONS                       #
@@ -163,6 +165,7 @@ def createDataBubble(xData, yData, zData, name):
     :return: plotly.graph_objs.graph_objs.Scatter
     """
     color = pickColor()
+    name = name.lower().capitalize()
     # creating the scatter object to return
     bubbleTrack = go.Scatter(
         x=xData,
@@ -238,10 +241,20 @@ def groupLayout(title, orientation):
         paper_bgcolor=BG_PAPER,
         plot_bgcolor=BG_PLOT,
         font=dict(color=FONT_COLOR),
+        width=P_WIDTH,
+        height=P_HEIGHT,
         barmode='group',
         orientation=orientation,
         title=title,
-        xaxis=dict(tickangle=-45),
+        xaxis=dict(
+            tickangle=-45,
+            ticks='outside',
+            dtick=5
+        ),
+        yaxis=dict(
+            ticks='outside',
+            dtick=5
+        ),
         bargap=0.2,
         bargroupgap=0.1,
         showlegend=True,
@@ -262,10 +275,20 @@ def stackLayout(title, orientation):
         paper_bgcolor=BG_PAPER,
         plot_bgcolor=BG_PLOT,
         font=dict(color=FONT_COLOR),
+        width=P_WIDTH,
+        height=P_HEIGHT,
         barmode='stack',
         orientation=orientation,
         title=title,
-        xaxis=dict(tickangle=-45),
+        xaxis=dict(
+            tickangle=-45,
+            ticks='outside',
+            dtick=5
+        ),
+        yaxis=dict(
+            ticks='outside',
+            dtick=5
+        ),
         showlegend=True,
         legend=dict(
             orientation='h'
@@ -332,11 +355,19 @@ def scatChart(tracks, rMode):
         paper_bgcolor=BG_PAPER,
         plot_bgcolor=BG_PLOT,
         font=dict(color=FONT_COLOR),
+        width=P_WIDTH,
+        height=P_HEIGHT,
         title=title,
         xaxis=dict(
+            ticks='outside',
+            dtick=5,
             tickangle=-45,
             showgrid=False,
             showline=True),
+        yaxis=dict(
+            ticks='outside',
+            dtick=5
+        ),
         showlegend=True,
         legend=dict(
             orientation='h'
@@ -375,9 +406,16 @@ def heatmap(track, axis):
         paper_bgcolor=BG_PAPER,
         plot_bgcolor=BG_PLOT,
         font=dict(color=FONT_COLOR),
+        width=P_WIDTH,
+        height=P_HEIGHT,
         title=title,
-        xaxis=dict(ticks='', nticks=20),
-        yaxis=dict(tickangle=-90)
+        xaxis=dict(
+            ticks='outside',
+            dtick=5,
+            tickangle=-45),
+        yaxis=dict(
+            tickangle=-90
+        )
     )
     fig = go.Figure(data=data, layout=layout)
     return fig
@@ -395,7 +433,7 @@ def createCode(rKey):
     trackid =''
     if rKey == 1 or rKey == 2 :
         # Chosing how many tracks will de displayed
-        rTracks = random.randint(2,5)
+        rTracks = random.randint(2, 4)
         # Chosing which tracks will be displayed
         tracks = random.sample(range(1, 8), rTracks)
         # Chosing a submode (group or stack) for the bar graph
