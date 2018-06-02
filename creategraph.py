@@ -6,15 +6,16 @@
 import random
 import plotly.plotly as py
 import plotly.graph_objs as go
-from sample import othersample as sample
+from sample import finalSample as sample
+from sample import wordlinks, lightbgcolors
 from code import previouscodes
-from secrets import plot_key, plot_username
+from secrets import plotkey, plotusername
 
 ########################################################
 #                  AUTHENTIFICATION                    #
 ########################################################
 
-py.sign_in(plot_username, plot_key)
+py.sign_in(plotusername, plotkey)
 
 ########################################################
 #                      FUNCTIONS                       #
@@ -25,11 +26,7 @@ def pickColor():
     Creates a string object refering to a hex color chosen randomly among a pre-set list
     :return: string
     """
-    color = random.choice(['#003399', '#0033ff', '#006600', '#006699', '#009933','#00cc66', '#00cc33', '#00ff33', '#00ffcc',
-                           '#330033', '#3300cc', '#333333', '#3333ff', '#336666', '#660099', '#660000', '#663333', '#666600',
-                           '#666600', '#66cc33', '#990033', '#993300', '#990066', '#999933', '#999999', '#99cc00', '#cc0033',
-                           '#cc3300', '#cc3333', '#cc3366', '#cc33ff', '#cc9900', '#ccff99', '#ff0033', '#ff3300', '#ff9900',
-                           '#ffcc00', '#ffcc33', '#ffff33', '#ff0000', '00ff00', '0000ff'])
+    color = random.choice(lightbgcolors)
     return color
 
 
@@ -39,11 +36,11 @@ def createTitle(listname):
     :param listname: list
     :return: string
     """
-    pivot = random.choice([' confrontés aux ', ' en fonction des ', ' comparés aux ', ' au prisme des ', ' croisés avec les', ' à la lumière des ', ' mis en rapport avec les '])
+    link = random.choice(wordlinks)
     if len(listname) > 2:
-        title = 'Les ' + str(listname[0]) + str(pivot) + str(listname[1]) + ' (et autres données)'
+        title = str(listname[0]) + link + '<br>' + str(listname[1]) + ' (and more)'
     else:
-        title = 'Les ' + str(listname[0]) + str(pivot) + str(listname[1])
+        title = str(listname[0]) + link + '<br>' + str(listname[1])
     return title
 
 
@@ -115,7 +112,7 @@ def createDataFill(xData, yData, name, mode):
         x=xData,
         y=yData,
         name=name,
-        fill='tonexty',
+        fill='tozeroy',
         mode=mode,
         line=dict(
             color=color
@@ -210,6 +207,7 @@ def retrieveDataTrack(track, scn, mode, orientation, dotSymbol, lineShape, lineS
     else:
         rData = yData
         rName = yName
+
     if scn == 'barscn':
         trackData = createDataBar(xData, rData, rName, orientation)
     elif scn == 'scatscn':
@@ -348,16 +346,21 @@ def heatmap(track, axis):
     color1 = pickColor()
     color2 = pickColor()
     colorscale = [[0, color1], [1, color2]]
-    tData = sample[str(track)][axis][1]
-    zData = [tData[:5], tData[5:10], tData[10:]] #----------------- ADAPT TO DATASET LENGTH
-    title = sample[str(track)]['name'] #-------------------------- MODIFY TITLE CALCULATION
+    zData = sample[str(track)][axis][1]
+    zName = sample[str(track)][axis][0]
+    xData = sample[str(track)]['x'][1]
+    title = 'Assessing ' + sample[str(track)]['name'] #-------------------------- MODIFY TITLE CALCULATION
     trace = go.Heatmap(
-        z=zData,
+        z=[zData],
+        x=xData,
+        y=zName,
         colorscale=colorscale,
         connectgaps=True)
     data = [trace]
     layout = go.Layout(
-        title=title
+        title=title,
+        xaxis=dict(ticks='', nticks=20),
+        yaxis=dict(tickangle=-90)
     )
     fig = go.Figure(data=data, layout=layout)
     return fig
@@ -377,7 +380,7 @@ def createCode(rKey):
         # Chosing how many tracks will de displayed
         rTracks = random.randint(2,5)
         # Chosing which tracks will be displayed
-        tracks = random.sample(range(1, 9), rTracks)
+        tracks = random.sample(range(1, 8), rTracks)
         # Chosing a submode (group or stack) for the bar graph
         rMode = random.choice(['g', 's'])
         # Generating the unique code for the figure
@@ -392,7 +395,7 @@ def createCode(rKey):
         # Chosing how many tracks will be displayed
         rTracks = random.randint(2, 5)
         # Chosing which tracks will be displayed
-        tracks = random.sample(range(1, 9), rTracks)
+        tracks = random.sample(range(1, 8), rTracks)
         # Chosing a submode (line-filed, line, dot, bubble) for the scatter graph
         rMode = random.choice(['f', 'l', 'd', 'b'])
         # Generating the unique code for the figure
@@ -404,7 +407,7 @@ def createCode(rKey):
         axis = None
     elif rKey == 6:
         # Chosing which track will be displayed
-        rTrack = random.randint(2,9)
+        rTrack = random.randint(1,8)
         # Chosing which axis will be displayed
         axis = random.choice(['y','z'])
         # Generating the unique code for the figure
@@ -454,12 +457,9 @@ while check == 0:
     check = checkcodelist(code)
     rKey = random.randint(1, 6)
     print("DEBUG : rKEy = " + str(rKey))
-    code, tracks, rMode, rTrack, axis = createCode(rKey) 
-#    fig, code = createFig(rKey)
-# Generating the figure
-
+    code, tracks, rMode, rTrack, axis = createCode(rKey)
 print("DEBUG : final code is " + code)
-
+# Generating the figure
 if rKey == 1 or rKey == 2:
     fig = barChart(tracks, rMode)
 elif rKey == 3 or rKey == 4 or rKey == 5:
