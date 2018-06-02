@@ -6,7 +6,7 @@
 import random
 import plotly.plotly as py
 import plotly.graph_objs as go
-from sample import finalSample as sample
+from sample import dataset as sample
 from sample import darkbgcolor as colorset
 from sample import wordlinks
 from code import previouscodes
