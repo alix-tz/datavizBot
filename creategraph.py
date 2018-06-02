@@ -18,6 +18,13 @@ from secrets import plotkey, plotusername
 py.sign_in(plotusername, plotkey)
 
 ########################################################
+#                    CONSTANTS                         #
+########################################################
+BG_PAPER = '#161616'
+BG_PLOT = '#161616'
+FONT_COLOR = '#FAFAFA'
+
+########################################################
 #                      FUNCTIONS                       #
 ########################################################
 
@@ -38,7 +45,7 @@ def createTitle(listname):
     """
     link = random.choice(wordlinks)
     if len(listname) > 2:
-        title = str(listname[0]) + link + '<br>' + str(listname[1]) + ' (and more)'
+        title = str(listname[0]) + link + '<br>' + str(listname[1]) + '<br>(and more)'
     else:
         title = str(listname[0]) + link + '<br>' + str(listname[1])
     return title
@@ -61,10 +68,7 @@ def createDataBar(xData, yData, name):
         name=name,
         marker=dict(
             color=color1,
-            opacity=0.7,
-            line=dict(
-                color='#FFF',
-                width=.5)
+            opacity=0.7
         )
         )
     return barTrack
@@ -230,6 +234,9 @@ def groupLayout(title, orientation):
     :return: plotly.graph_objs.graph_objs.Layout
     """
     layout = go.Layout(
+        paper_bgcolor=BG_PAPER,
+        plot_bgcolor=BG_PLOT,
+        font=dict(color=FONT_COLOR),
         barmode='group',
         orientation=orientation,
         title=title,
@@ -251,6 +258,9 @@ def stackLayout(title, orientation):
     :return: plotly.graph_objs.graph_objs.Layout
     """
     layout = go.Layout(
+        paper_bgcolor=BG_PAPER,
+        plot_bgcolor=BG_PLOT,
+        font=dict(color=FONT_COLOR),
         barmode='stack',
         orientation=orientation,
         title=title,
@@ -318,6 +328,9 @@ def scatChart(tracks, rMode):
     title = createTitle(listname)
     # Creating Layout object
     layout = go.Layout(
+        paper_bgcolor=BG_PAPER,
+        plot_bgcolor=BG_PLOT,
+        font=dict(color=FONT_COLOR),
         title=title,
         xaxis=dict(
             tickangle=-45,
@@ -349,7 +362,7 @@ def heatmap(track, axis):
     zData = sample[str(track)][axis][1]
     zName = sample[str(track)][axis][0]
     xData = sample[str(track)]['x'][1]
-    title = 'Assessing ' + sample[str(track)]['name'] #-------------------------- MODIFY TITLE CALCULATION
+    title = 'ASSESSING ' + sample[str(track)]['name']
     trace = go.Heatmap(
         z=[zData],
         x=xData,
@@ -358,6 +371,9 @@ def heatmap(track, axis):
         connectgaps=True)
     data = [trace]
     layout = go.Layout(
+        paper_bgcolor=BG_PAPER,
+        plot_bgcolor=BG_PLOT,
+        font=dict(color=FONT_COLOR),
         title=title,
         xaxis=dict(ticks='', nticks=20),
         yaxis=dict(tickangle=-90)
@@ -393,7 +409,7 @@ def createCode(rKey):
 
     elif rKey == 3 or rKey == 4 or rKey == 5:
         # Chosing how many tracks will be displayed
-        rTracks = random.randint(2, 5)
+        rTracks = random.randint(2, 4)
         # Chosing which tracks will be displayed
         tracks = random.sample(range(1, 8), rTracks)
         # Chosing a submode (line-filed, line, dot, bubble) for the scatter graph
@@ -455,7 +471,7 @@ code = 0
 
 while check == 0:
     check = checkcodelist(code)
-    rKey = random.randint(1, 2)
+    rKey = random.randint(1, 6)
     print("DEBUG : rKEy = " + str(rKey))
     code, tracks, rMode, rTrack, axis = createCode(rKey)
 print("DEBUG : final code is " + code)
