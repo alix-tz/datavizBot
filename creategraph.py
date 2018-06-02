@@ -7,7 +7,8 @@ import random
 import plotly.plotly as py
 import plotly.graph_objs as go
 from sample import finalSample as sample
-from sample import wordlinks, lightbgcolors
+from sample import darkbgcolor as colorset
+from sample import wordlinks
 from code import previouscodes
 from secrets import plotkey, plotusername
 
@@ -33,7 +34,7 @@ def pickColor():
     Creates a string object refering to a hex color chosen randomly among a pre-set list
     :return: string
     """
-    color = random.choice(lightbgcolors)
+    color = random.choice(colorset)
     return color
 
 
