@@ -44,7 +44,7 @@ def createTitle(listname):
     return title
 
 
-def createDataBar(xData, yData, name, orientation):
+def createDataBar(xData, yData, name):
     """
     Creates a bar object for bar charts
     :param xData: list
@@ -54,20 +54,18 @@ def createDataBar(xData, yData, name, orientation):
     :return: plotly.graph_objs.graph_objs.Bar
     """
     color1 = pickColor()
-    color2 = pickColor()
-    # Chosing lining style
-    line = random.choice([True, False])
-    if line == True:
-        marker = dict(color=color1, line=dict(color=color2, width=0.5))
-    else:
-        marker = dict(color=color1, opacity=1)
     # Creating the bar object to return
     barTrack = go.Bar(
         x=xData,
         y=yData,
         name=name,
-        orientation=orientation,
-        marker=marker
+        marker=dict(
+            color=color1,
+            opacity=0.7,
+            line=dict(
+                color='#FFF',
+                width=.5)
+        )
         )
     return barTrack
 
@@ -178,7 +176,7 @@ def createDataBubble(xData, yData, zData, name):
     return bubbleTrack
 
 
-def retrieveDataTrack(track, scn, mode, orientation, dotSymbol, lineShape, lineStyle, fillStyle):
+def retrieveDataTrack(track, scn, mode, dotSymbol, lineShape, lineStyle, fillStyle):
     """
     Calculate data from a sample to create traces for charts
     Call appropriate function depending on the scenario and chart mode indicated
@@ -209,7 +207,7 @@ def retrieveDataTrack(track, scn, mode, orientation, dotSymbol, lineShape, lineS
         rName = yName
 
     if scn == 'barscn':
-        trackData = createDataBar(xData, rData, rName, orientation)
+        trackData = createDataBar(xData, rData, rName)
     elif scn == 'scatscn':
         if mode == 'f':
             trackData = createDataFill(xData, rData, rName, fillStyle)
@@ -225,7 +223,7 @@ def retrieveDataTrack(track, scn, mode, orientation, dotSymbol, lineShape, lineS
 # ------------------------------------------------------#
 #                      BAR SCENARIOS                    #
 # ------------------------------------------------------#
-def groupLayout(title):
+def groupLayout(title, orientation):
     """
     creates layout object for group style bar layout
     :param title: string
@@ -233,6 +231,7 @@ def groupLayout(title):
     """
     layout = go.Layout(
         barmode='group',
+        orientation=orientation,
         title=title,
         xaxis=dict(tickangle=-45),
         bargap=0.2,
@@ -245,7 +244,7 @@ def groupLayout(title):
     return layout
 
 
-def stackLayout(title):
+def stackLayout(title, orientation):
     """
     creates layout object for stack style bar layout
     :param title: string
@@ -253,6 +252,7 @@ def stackLayout(title):
     """
     layout = go.Layout(
         barmode='stack',
+        orientation=orientation,
         title=title,
         xaxis=dict(tickangle=-45),
         showlegend=True,
@@ -276,16 +276,16 @@ def barChart(tracks, rMode):
     rOrientation = random.choice(['h', 'v'])
     # Creating each Bar object, appended to data list object
     for track in tracks:
-        trace, tracename = retrieveDataTrack(track, 'barscn', None, rOrientation, None, None, None, None)
+        trace, tracename = retrieveDataTrack(track, 'barscn', None, None, None, None, None)
         data.append(trace)
         listname.append(tracename)
     # Calculating chart title
     title = createTitle(listname)
     # Creating Layout object
     if rMode == 'g':
-        layout = groupLayout(title)
+        layout = groupLayout(title, rOrientation)
     if rMode == 's':
-        layout = stackLayout(title)
+        layout = stackLayout(title, rOrientation)
     # Generating the figure to return
     fig = go.Figure(data=data, layout=layout)
     return fig
@@ -311,7 +311,7 @@ def scatChart(tracks, rMode):
     fillStyle = random.choice(['lines', 'none'])
     # Creating each Bar object, appended to data list object
     for track in tracks:
-        trace, tracename = retrieveDataTrack(track, 'scatscn', rMode, None, dotSymbol, lineShape, lineStyle, fillStyle)
+        trace, tracename = retrieveDataTrack(track, 'scatscn', rMode, dotSymbol, lineShape, lineStyle, fillStyle)
         data.append(trace)
         listname.append(tracename)
     # Calculating chart title
@@ -455,7 +455,7 @@ code = 0
 
 while check == 0:
     check = checkcodelist(code)
-    rKey = random.randint(1, 6)
+    rKey = random.randint(1, 2)
     print("DEBUG : rKEy = " + str(rKey))
     code, tracks, rMode, rTrack, axis = createCode(rKey)
 print("DEBUG : final code is " + code)
