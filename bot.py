@@ -29,7 +29,7 @@ import os
 import tweepy
 from secrets import C_KEY, C_SECRET, A_TOKEN, A_TOKEN_SECRET
 from time import gmtime, strftime
-
+import creategraph as cg
 
 # ====== Individual bot configuration ==========================
 bot_username = ''
@@ -40,12 +40,15 @@ logfile_name = bot_username + ".log"
 
 def create_tweet():
     """Create the text of the tweet you want to send."""
-    # Replace this with your code!
-    text = ""
-    return text
+    filename, taglist, title = cg.creategraph()
+    filename = filename + '.png'
+    tagging = '#dataviz #bot'
+    for tag in taglist:
+        tagging = tagging + ' ' + tag
+    text = title + '\n' + tagging
+    return text, filename
 
-
-def tweet(text):
+def tweet(text, filename):
     """Send out the text as a tweet."""
     # Twitter authentication
     auth = tweepy.OAuthHandler(C_KEY, C_SECRET)
@@ -54,7 +57,7 @@ def tweet(text):
 
     # Send the tweet and log success or failure
     try:
-        api.update_status(text)
+        api.update_with_media(filename, text)
     except tweepy.error.TweepError as e:
         log(e.message)
     else:
@@ -70,5 +73,5 @@ def log(message):
 
 
 if __name__ == "__main__":
-    tweet_text = create_tweet()
-    tweet(tweet_text)
+    tweet_text, tweet_image = create_tweet()
+    tweet(tweet_text, tweet_image)
