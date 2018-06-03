@@ -6,9 +6,9 @@
 import random
 import plotly.plotly as py
 import plotly.graph_objs as go
-from sample import dataset as sample
-from sample import darkbgcolor as colorset
-from sample import wordlinks
+from data import dataset as sample
+from data import darkbgcolor as colorset
+from data import wordlinks
 from code import previouscodes
 from secrets import plotkey2, plotusername2
 
