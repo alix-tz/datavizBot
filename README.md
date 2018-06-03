@@ -1,8 +1,8 @@
-This is a personnal project, please quote this repository if reusing the code. 
+**This is a personnal project, please quote this repository if reusing the code.**
 
-Installing `plotly` in the environment is necessary for the script to run. See `requirements.txt`.
+## What does this do ?
+This project generates random data visualizations, out of a series of prepared data sets, and tweets them on the [@datavizBot](https://twitter.com/datavizBot) Twitter account with a legend and several tags matching the content of the image.
 
-Most datasets were collected from various free and open data collections online. Among which: 
-- [wikidata](https://www.wikidata.org)
-- [datamarket](https://datamarket.com)
-- [quandl](https://www.quandl.com)
+## Recommendations :
+- Installing `plotly` and `tweepy` in the environment is necessary for the script to run. See `requirements.txt`.
+- To access `.csv` files, see [datavizBot_collectingdata repository](https://github.com/alix-tz/datavizBot_collectingdata)
