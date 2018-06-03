@@ -505,23 +505,25 @@ def writenewcodelist(code):
 ########################################################
 #                        SCRIPT                        #
 ########################################################
-check = 0
-code = 0
+def creategraph():
+    check = 0
+    code = 0
 
-while check == 0:
-    check = checkcodelist(code)
-    rKey = random.randint(1, 6)
-    print("DEBUG : rKEy = " + str(rKey))
-    code, tracks, rMode, rTrack, axis = createCode(rKey)
-print("DEBUG : final code is " + code)
-# Generating the figure
-if rKey == 1 or rKey == 2:
-    fig = barChart(tracks, rMode)
-elif rKey == 3 or rKey == 4 or rKey == 5 or rKey == 6:
-    fig = scatChart(tracks, rMode)
-elif rKey == 7:
-    fig = heatmap(rTrack, axis)
+    while check == 0:
+        check = checkcodelist(code)
+        rKey = random.randint(1, 6)
+        print("DEBUG : rKEy = " + str(rKey))
+        code, tracks, rMode, rTrack, axis = createCode(rKey)
+    print("DEBUG : final code is " + code)
+    # Generating the figure
+    if rKey == 1 or rKey == 2:
+        fig = barChart(tracks, rMode)
+    elif rKey == 3 or rKey == 4 or rKey == 5 or rKey == 6:
+        fig = scatChart(tracks, rMode)
+    elif rKey == 7:
+        fig = heatmap(rTrack, axis)
 
-writenewcodelist(code)
-filename = "images/" + code
-py.image.save_as(fig, filename=filename, format='png')
+    writenewcodelist(code)
+    filename = "images/" + code
+    py.image.save_as(fig, filename=filename, format='png')
+    return
