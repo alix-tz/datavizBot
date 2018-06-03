@@ -435,7 +435,7 @@ def createCode(rKey):
         # Chosing how many tracks will de displayed
         rTracks = random.randint(2, 4)
         # Chosing which tracks will be displayed
-        tracks = random.sample(range(1, 8), rTracks)
+        tracks = random.sample(range(1, 11), rTracks)
         # Chosing a submode (group or stack) for the bar graph
         rMode = random.choice(['g', 's'])
         # Generating the unique code for the figure
@@ -446,11 +446,11 @@ def createCode(rKey):
         rTrack = None
         axis = None
 
-    elif rKey == 3 or rKey == 4 or rKey == 5:
+    elif rKey == 3 or rKey == 4 or rKey == 5 or rKey == 6:
         # Chosing how many tracks will be displayed
         rTracks = random.randint(2, 4)
         # Chosing which tracks will be displayed
-        tracks = random.sample(range(1, 8), rTracks)
+        tracks = random.sample(range(1, 11), rTracks)
         # Chosing a submode (line-filed, line, dot, bubble) for the scatter graph
         rMode = random.choice(['f', 'l', 'd', 'b'])
         # Generating the unique code for the figure
@@ -460,9 +460,9 @@ def createCode(rKey):
         code = "s" + rMode + str(rTracks) + trackid
         rTrack = None
         axis = None
-    elif rKey == 6:
+    elif rKey == 7:
         # Chosing which track will be displayed
-        rTrack = random.randint(1,8)
+        rTrack = random.randint(1,11)
         # Chosing which axis will be displayed
         axis = random.choice(['y','z'])
         # Generating the unique code for the figure
@@ -517,9 +517,9 @@ print("DEBUG : final code is " + code)
 # Generating the figure
 if rKey == 1 or rKey == 2:
     fig = barChart(tracks, rMode)
-elif rKey == 3 or rKey == 4 or rKey == 5:
+elif rKey == 3 or rKey == 4 or rKey == 5 or rKey == 6:
     fig = scatChart(tracks, rMode)
-elif rKey == 6:
+elif rKey == 7:
     fig = heatmap(rTrack, axis)
 
 writenewcodelist(code)
