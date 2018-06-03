@@ -3,3 +3,4 @@ images/
 .idea/
 graphcode.py
 secrets.py
+.log
