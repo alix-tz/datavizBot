@@ -61,7 +61,7 @@ def tweet(text, filename):
     except tweepy.error.TweepError as e:
         log(e.message)
     else:
-        log("Tweeted: " + text)
+        log("Tweeted: " + text + '. With image: ' + filename)
 
 
 def log(message):
