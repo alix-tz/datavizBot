@@ -205,6 +205,7 @@ def retrieveDataTrack(track, scn, mode, dotSymbol, lineShape, lineStyle, fillSty
     zData = databundle['z'][1]
     zName = databundle['z'][0][0]
     trackName = databundle['name']
+    taglist = databundle['tags']
     # Chosing wether the y axis will dwell from yData or zData
     axis = random.choice(['y','z'])
     if axis == 'z':
@@ -225,7 +226,7 @@ def retrieveDataTrack(track, scn, mode, dotSymbol, lineShape, lineStyle, fillSty
             trackData = createDataLine(xData, rData, rName, lineStyle, lineShape)
         elif mode == 'd':
             trackData = createDataDot(xData, rData, rName, dotSymbol)
-    return trackData, trackName
+    return trackData, trackName, taglist
 
 
 # ------------------------------------------------------#
@@ -306,13 +307,15 @@ def barChart(tracks, rMode):
     """
     data = []
     listname = []
+    alltags = []
     # Choosing orientation
     rOrientation = random.choice(['h', 'v'])
     # Creating each Bar object, appended to data list object
     for track in tracks:
-        trace, tracename = retrieveDataTrack(track, 'barscn', None, None, None, None, None)
+        trace, tracename, taglist = retrieveDataTrack(track, 'barscn', None, None, None, None, None)
         data.append(trace)
         listname.append(tracename)
+        alltags = alltags + taglist
     # Calculating chart title
     title = createTitle(listname)
     # Creating Layout object
@@ -322,7 +325,7 @@ def barChart(tracks, rMode):
         layout = stackLayout(title, rOrientation)
     # Generating the figure to return
     fig = go.Figure(data=data, layout=layout)
-    return fig
+    return fig, title, alltags
 
 
 # ------------------------------------------------------#
@@ -338,6 +341,7 @@ def scatChart(tracks, rMode):
     """
     listname = []
     data = []
+    alltags = []
     # Chosing scatter chart style
     dotSymbol = random.choice(['circle', 'x', 'diamond-wide', 'star-diamond-dot'])
     lineStyle = random.choice(['lines', 'lines+markers'])
@@ -345,9 +349,10 @@ def scatChart(tracks, rMode):
     fillStyle = random.choice(['lines', 'none'])
     # Creating each Bar object, appended to data list object
     for track in tracks:
-        trace, tracename = retrieveDataTrack(track, 'scatscn', rMode, dotSymbol, lineShape, lineStyle, fillStyle)
+        trace, tracename, taglist = retrieveDataTrack(track, 'scatscn', rMode, dotSymbol, lineShape, lineStyle, fillStyle)
         data.append(trace)
         listname.append(tracename)
+        alltags = alltags + taglist
     # Calculating chart title
     title = createTitle(listname)
     # Creating Layout object
@@ -375,7 +380,7 @@ def scatChart(tracks, rMode):
     )
     # Generating the figure to return
     fig = go.Figure(data=data, layout=layout)
-    return fig
+    return fig, title, alltags
 
 
 # ------------------------------------------------------#
@@ -394,6 +399,7 @@ def heatmap(track, axis):
     zData = sample[str(track)][axis][1]
     zName = sample[str(track)][axis][0]
     xData = sample[str(track)]['x'][1]
+    taglist = sample[str(track)]['tags']
     title = 'ASSESSING ' + sample[str(track)]['name']
     trace = go.Heatmap(
         z=[zData],
@@ -418,7 +424,7 @@ def heatmap(track, axis):
         )
     )
     fig = go.Figure(data=data, layout=layout)
-    return fig
+    return fig, title, taglist
 
 
 #------------------------------------------------------#
@@ -511,19 +517,21 @@ def creategraph():
 
     while check == 0:
         check = checkcodelist(code)
-        rKey = random.randint(1, 6)
+        rKey = random.randint(1, 7)
         print("DEBUG : rKEy = " + str(rKey))
         code, tracks, rMode, rTrack, axis = createCode(rKey)
     print("DEBUG : final code is " + code)
     # Generating the figure
     if rKey == 1 or rKey == 2:
-        fig = barChart(tracks, rMode)
+        fig, title, taglist = barChart(tracks, rMode)
     elif rKey == 3 or rKey == 4 or rKey == 5 or rKey == 6:
-        fig = scatChart(tracks, rMode)
+        fig, title, taglist = scatChart(tracks, rMode)
     elif rKey == 7:
-        fig = heatmap(rTrack, axis)
+        fig, title, taglist = heatmap(rTrack, axis)
 
     writenewcodelist(code)
     filename = "images/" + code
     py.image.save_as(fig, filename=filename, format='png')
-    return
+
+    title = title.replace('<br>', ' ').capitalize()
+    return filename, taglist, title
