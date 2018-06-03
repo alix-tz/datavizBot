@@ -9,7 +9,7 @@ import plotly.graph_objs as go
 from data import dataset as sample
 from data import darkbgcolor as colorset
 from data import wordlinks
-from code import previouscodes
+from graphcode import previouscodes
 from secrets import plotkey2, plotusername2
 
 ########################################################
@@ -497,7 +497,7 @@ def writenewcodelist(code):
     for x in previouscodes:
         previous = previous + "'" + x + "',"
     newcodes = "previouscodes=[" + previous + "'" + code + "']"
-    with open('code.py', 'w') as file:
+    with open('graphcode.py', 'w') as file:
         file.write(newcodes)
     return
 
